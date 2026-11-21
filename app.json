@@ -1,39 +1,68 @@
 {
   "expo": {
-    "name": "time-mark-tmp",
-    "slug": "time-mark-tmp",
+    "name": "TimeMark",
+    "slug": "time-mark",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "timemarktmp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "timemark",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0B0D",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.timemark.app",
+      "supportsTablet": false
     },
     "android": {
+      "package": "com.timemark.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0B0B0D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-      "output": "server",
-      "favicon": "./assets/images/favicon.png"
-    },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0B0B0D",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "TimeMark uses the camera to take photos you can stamp with the date, time and place.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "TimeMark uses your location to show where a photo was taken, only when you turn on the location stamp."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "TimeMark saves your stamped photos to your photo library.",
+          "savePhotosPermission": "TimeMark saves your stamped photos to your photo library.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      "expo-sharing",
+      "expo-localization",
+      "@react-native-community/datetimepicker",
+      "expo-font"
     ],
+    "locales": {
+      "vi": "./src/i18n/native-vi.json"
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

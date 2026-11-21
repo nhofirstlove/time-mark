@@ -1,0 +1,73 @@
+{
+  "common": {
+    "done": "Done",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "back": "Back"
+  },
+  "camera": {
+    "permissionTitle": "Camera access needed",
+    "permissionBody": "TimeMark needs your camera to take photos.",
+    "grant": "Allow camera",
+    "openSettings": "Open settings",
+    "locating": "Finding location…",
+    "noLocation": "Location off"
+  },
+  "editor": {
+    "title": "Edit stamp",
+    "tabTemplate": "Template",
+    "tabContent": "Content",
+    "tabStyle": "Style",
+    "save": "Save",
+    "share": "Share",
+    "saving": "Saving…",
+    "saved": "Saved to your gallery",
+    "savedWithOriginal": "Saved stamped photo + original",
+    "saveFailed": "Could not save the photo",
+    "shareFailed": "Could not share the photo",
+    "galleryPermission": "Allow photo library access to save photos.",
+    "discardTitle": "Discard this photo?",
+    "discard": "Discard"
+  },
+  "content": {
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "text": "Text",
+    "change": "Change",
+    "resetNow": "Use capture time",
+    "locationPlaceholder": "Place name",
+    "refreshLocation": "Use GPS",
+    "textPlaceholder": "Add a caption…",
+    "pickDate": "Pick date & time"
+  },
+  "style": {
+    "font": "Font",
+    "color": "Color",
+    "size": "Size",
+    "position": "Position",
+    "opacity": "Opacity",
+    "dateFormat": "Date format",
+    "timeFormat": "Time format",
+    "fixedPosition": "This template has a fixed layout"
+  },
+  "templates": {
+    "minimal": "Minimal",
+    "film": "Film date",
+    "polaroid": "Polaroid",
+    "travel": "Travel stamp",
+    "block": "Info bar",
+    "elegant": "Elegant"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "langSystem": "System",
+    "saveOriginal": "Also save the original photo",
+    "saveOriginalHint": "Keeps a clean copy without the stamp",
+    "locationDetail": "Location detail",
+    "locShort": "City, country",
+    "locFull": "Full address",
+    "locCoords": "GPS coordinates"
+  }
+}

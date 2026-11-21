@@ -1,0 +1,9 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "TimeMark",
+    "NSCameraUsageDescription": "TimeMark dùng máy ảnh để chụp ảnh và đóng dấu ngày, giờ, địa điểm.",
+    "NSLocationWhenInUseUsageDescription": "TimeMark dùng vị trí để hiển thị nơi chụp ảnh, chỉ khi bạn bật dấu vị trí.",
+    "NSPhotoLibraryUsageDescription": "TimeMark lưu ảnh đã đóng dấu vào thư viện ảnh của bạn.",
+    "NSPhotoLibraryAddUsageDescription": "TimeMark lưu ảnh đã đóng dấu vào thư viện ảnh của bạn."
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "common": {
+    "done": "Xong",
+    "cancel": "Huỷ",
+    "retry": "Thử lại",
+    "back": "Quay lại"
+  },
+  "camera": {
+    "permissionTitle": "Cần quyền truy cập máy ảnh",
+    "permissionBody": "TimeMark cần dùng máy ảnh để chụp ảnh.",
+    "grant": "Cho phép máy ảnh",
+    "openSettings": "Mở cài đặt",
+    "locating": "Đang tìm vị trí…",
+    "noLocation": "Vị trí đang tắt"
+  },
+  "editor": {
+    "title": "Chỉnh dấu thời gian",
+    "tabTemplate": "Mẫu",
+    "tabContent": "Nội dung",
+    "tabStyle": "Kiểu",
+    "save": "Lưu",
+    "share": "Chia sẻ",
+    "saving": "Đang lưu…",
+    "saved": "Đã lưu vào thư viện ảnh",
+    "savedWithOriginal": "Đã lưu ảnh có dấu + ảnh gốc",
+    "saveFailed": "Không lưu được ảnh",
+    "shareFailed": "Không chia sẻ được ảnh",
+    "galleryPermission": "Hãy cho phép truy cập thư viện ảnh để lưu ảnh.",
+    "discardTitle": "Bỏ ảnh này?",
+    "discard": "Bỏ"
+  },
+  "content": {
+    "date": "Ngày",
+    "time": "Giờ",
+    "location": "Vị trí",
+    "text": "Chữ",
+    "change": "Đổi",
+    "resetNow": "Dùng giờ chụp",
+    "locationPlaceholder": "Tên địa điểm",
+    "refreshLocation": "Dùng GPS",
+    "textPlaceholder": "Thêm chú thích…",
+    "pickDate": "Chọn ngày giờ"
+  },
+  "style": {
+    "font": "Phông chữ",
+    "color": "Màu",
+    "size": "Cỡ",
+    "position": "Vị trí",
+    "opacity": "Độ mờ",
+    "dateFormat": "Định dạng ngày",
+    "timeFormat": "Định dạng giờ",
+    "fixedPosition": "Mẫu này có bố cục cố định"
+  },
+  "templates": {
+    "minimal": "Tối giản",
+    "film": "Ngày phim",
+    "polaroid": "Polaroid",
+    "travel": "Dấu du lịch",
+    "block": "Thanh thông tin",
+    "elegant": "Thanh lịch"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "langSystem": "Theo hệ thống",
+    "saveOriginal": "Lưu thêm ảnh gốc",
+    "saveOriginalHint": "Giữ một bản không có dấu",
+    "locationDetail": "Mức chi tiết vị trí",
+    "locShort": "Thành phố, quốc gia",
+    "locFull": "Địa chỉ đầy đủ",
+    "locCoords": "Toạ độ GPS"
+  }
+}
