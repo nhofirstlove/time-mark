@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Chip, Row, Section } from '@/components/ui';
@@ -61,6 +61,7 @@ export default function SettingsScreen() {
             thumbColor="#fff"
           />
         </View>
+        {Platform.OS === 'web' && <Text style={st.attrib}>{t('settings.osm')}</Text>}
       </ScrollView>
     </View>
   );
@@ -81,4 +82,5 @@ const st = StyleSheet.create({
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 },
   switchLabel: { color: C.text, fontSize: 16, fontWeight: '500' },
   switchHint: { color: C.textDim, fontSize: 13, marginTop: 2 },
+  attrib: { color: C.textDim, fontSize: 12, marginTop: 28, textAlign: 'center' },
 });

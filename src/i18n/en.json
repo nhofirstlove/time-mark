@@ -11,7 +11,10 @@
     "grant": "Allow camera",
     "openSettings": "Open settings",
     "locating": "Finding location…",
-    "noLocation": "Location off"
+    "noLocation": "Location off",
+    "webDenied": "Camera is blocked for this site. Allow camera access in your browser settings, then tap Try again.",
+    "unavailable": "No camera available. You can still choose a photo.",
+    "pickPhoto": "Choose photo"
   },
   "editor": {
     "title": "Edit stamp",
@@ -27,7 +30,12 @@
     "shareFailed": "Could not share the photo",
     "galleryPermission": "Allow photo library access to save photos.",
     "discardTitle": "Discard this photo?",
-    "discard": "Discard"
+    "discard": "Discard",
+    "readyTitle": "Photo ready",
+    "saveToPhotos": "Save to Photos",
+    "download": "Download",
+    "webSaveHint": "In the share menu, tap “Save Image”. You can also press and hold the photo.",
+    "webDownloadHint": "Download the photo, or press and hold it to save."
   },
   "content": {
     "date": "Date",
@@ -68,6 +76,7 @@
     "locationDetail": "Location detail",
     "locShort": "City, country",
     "locFull": "Full address",
-    "locCoords": "GPS coordinates"
+    "locCoords": "GPS coordinates",
+    "osm": "Addresses © OpenStreetMap contributors"
   }
 }

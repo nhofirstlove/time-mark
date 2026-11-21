@@ -6,7 +6,7 @@ import { useStampFonts } from '@/overlay/fonts';
 import { drawComposite, drawStamp } from '@/overlay/render';
 import type { StampLines, StampStyle } from '@/overlay/types';
 
-interface Props {
+export interface StampCanvasProps {
   width: number;
   height: number;
   lines: StampLines;
@@ -18,7 +18,7 @@ interface Props {
   canvasStyle?: StyleProp<ViewStyle>;
 }
 
-export function StampCanvas({ width, height, lines, style, image, background, canvasStyle }: Props) {
+export function StampCanvas({ width, height, lines, style, image, background, canvasStyle }: StampCanvasProps) {
   const fonts = useStampFonts();
 
   const picture = useMemo(() => {

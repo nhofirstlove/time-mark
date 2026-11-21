@@ -1,11 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useImage } from '@shopify/react-native-skia';
-import * as Haptics from 'expo-haptics';
 import { router, usePreventRemove } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -18,13 +15,16 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ContentPanel } from '@/components/ContentPanel';
+import { ExportSheet } from '@/components/ExportSheet';
 import { StampCanvas } from '@/components/StampCanvas';
 import { StylePanel } from '@/components/StylePanel';
 import { TemplateStrip } from '@/components/TemplateStrip';
 import { Button } from '@/components/ui';
+import { usePhotoImage } from '@/hooks/usePhotoImage';
 import { useLang, useTranslation } from '@/i18n';
 import { useStampFonts } from '@/overlay/fonts';
 import { buildLines, renderStampedJpeg } from '@/overlay/render';
+import { confirm, notify, successFeedback } from '@/services/feedback';
 import { GalleryPermissionError, saveToGallery, shareImage, writeTempJpeg } from '@/services/media';
 import { useDraft } from '@/store/draft';
 import { useSettings } from '@/store/settings';
@@ -32,6 +32,7 @@ import { C } from '@/theme';
 
 type Tab = 'template' | 'content' | 'style';
 const TABS: Tab[] = ['template', 'content', 'style'];
+const isWeb = Platform.OS === 'web';
 
 export default function EditorScreen() {
   const { t } = useTranslation();
@@ -48,11 +49,13 @@ export default function EditorScreen() {
   const saveOriginal = useSettings((s) => s.saveOriginal);
   const applyTemplate = useSettings((s) => s.applyTemplate);
 
-  const image = useImage(photo?.uri ?? null);
+  const image = usePhotoImage(photo?.uri ?? null);
   const [tab, setTab] = useState<Tab>('template');
   const [box, setBox] = useState({ w: 0, h: 0 });
   const [busy, setBusy] = useState<'save' | 'share' | null>(null);
   const [savedKey, setSavedKey] = useState<string | null>(null);
+  /** Web: finished photo waiting in the save/share sheet. */
+  const [sheet, setSheet] = useState<{ stamped: string; original: string | null } | null>(null);
   /** Last full-res render, reused when sharing right after saving. */
   const rendered = useRef<{ key: string; uri: string } | null>(null);
 
@@ -64,17 +67,11 @@ export default function EditorScreen() {
   // Ask before throwing away an unsaved photo.
   const [discarded, setDiscarded] = useState(false);
   usePreventRemove(!!photo && !isSaved && !busy && !discarded, ({ repeat }) => {
-    Alert.alert(t('editor.discardTitle'), undefined, [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('editor.discard'),
-        style: 'destructive',
-        onPress: () => {
-          setDiscarded(true);
-          repeat();
-        },
-      },
-    ]);
+    confirm(t('editor.discardTitle'), t('editor.discard'), t('common.cancel')).then((ok) => {
+      if (!ok) return;
+      setDiscarded(true);
+      repeat();
+    });
   });
 
   if (!photo) {
@@ -106,13 +103,17 @@ export default function EditorScreen() {
     setBusy('save');
     try {
       const uri = await renderFile();
+      if (isWeb) {
+        setSheet({ stamped: uri, original: saveOriginal ? photo!.uri : null });
+        return;
+      }
       await saveToGallery(uri, saveOriginal ? photo!.uri : null);
       setSavedKey(key);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert(saveOriginal ? t('editor.savedWithOriginal') : t('editor.saved'));
+      successFeedback();
+      notify(saveOriginal ? t('editor.savedWithOriginal') : t('editor.saved'));
     } catch (e) {
       const msg = e instanceof GalleryPermissionError ? t('editor.galleryPermission') : String(e);
-      Alert.alert(t('editor.saveFailed'), msg);
+      notify(t('editor.saveFailed'), msg);
     } finally {
       setBusy(null);
     }
@@ -122,9 +123,13 @@ export default function EditorScreen() {
     setBusy('share');
     try {
       const uri = await renderFile();
+      if (isWeb) {
+        setSheet({ stamped: uri, original: null });
+        return;
+      }
       await shareImage(uri, t('editor.share'));
     } catch (e) {
-      Alert.alert(t('editor.shareFailed'), String(e));
+      notify(t('editor.shareFailed'), String(e));
     } finally {
       setBusy(null);
     }
@@ -209,6 +214,16 @@ export default function EditorScreen() {
           }
         />
       </View>
+      <ExportSheet
+        stampedUri={sheet?.stamped ?? null}
+        originalUri={sheet?.original ?? null}
+        onClose={() => setSheet(null)}
+        onDone={() => {
+          setSavedKey(key);
+          setSheet(null);
+          successFeedback();
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }

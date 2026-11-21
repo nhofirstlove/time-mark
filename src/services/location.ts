@@ -1,7 +1,11 @@
 import * as Location from 'expo-location';
+import { Platform } from 'react-native';
 import { create } from 'zustand';
 
+import i18n from '@/i18n';
 import type { LocationDetail } from '@/store/settings';
+
+import { reverseGeocodeWeb } from './geocodeWeb';
 
 export type LocationStatus = 'idle' | 'loading' | 'ok' | 'denied' | 'error';
 
@@ -47,9 +51,11 @@ export const useLocation = create<LocationState>()((set) => ({
         if (!pos) throw new Error('no position');
         set({ coords: pos.coords, status: 'ok' });
         // Reverse geocoding needs internet; on failure we keep coordinates.
-        const results = await withTimeout(Location.reverseGeocodeAsync(pos.coords), 10_000).catch(
-          () => [],
-        );
+        const lookup =
+          Platform.OS === 'web'
+            ? reverseGeocodeWeb(pos.coords, i18n.language)
+            : Location.reverseGeocodeAsync(pos.coords);
+        const results = await withTimeout(lookup, 10_000).catch(() => []);
         set({ address: results[0] ?? null });
       } catch {
         set({ status: 'error' });

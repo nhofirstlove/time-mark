@@ -11,7 +11,10 @@
     "grant": "Cho phép máy ảnh",
     "openSettings": "Mở cài đặt",
     "locating": "Đang tìm vị trí…",
-    "noLocation": "Vị trí đang tắt"
+    "noLocation": "Vị trí đang tắt",
+    "webDenied": "Trang này đang bị chặn máy ảnh. Hãy cho phép máy ảnh trong cài đặt trình duyệt rồi bấm Thử lại.",
+    "unavailable": "Không có máy ảnh. Bạn vẫn có thể chọn ảnh.",
+    "pickPhoto": "Chọn ảnh"
   },
   "editor": {
     "title": "Chỉnh dấu thời gian",
@@ -27,7 +30,12 @@
     "shareFailed": "Không chia sẻ được ảnh",
     "galleryPermission": "Hãy cho phép truy cập thư viện ảnh để lưu ảnh.",
     "discardTitle": "Bỏ ảnh này?",
-    "discard": "Bỏ"
+    "discard": "Bỏ",
+    "readyTitle": "Ảnh đã sẵn sàng",
+    "saveToPhotos": "Lưu vào Ảnh",
+    "download": "Tải xuống",
+    "webSaveHint": "Trong menu chia sẻ, chọn “Lưu hình ảnh”. Bạn cũng có thể nhấn giữ vào ảnh.",
+    "webDownloadHint": "Tải ảnh xuống, hoặc nhấn giữ vào ảnh để lưu."
   },
   "content": {
     "date": "Ngày",
@@ -68,6 +76,7 @@
     "locationDetail": "Mức chi tiết vị trí",
     "locShort": "Thành phố, quốc gia",
     "locFull": "Địa chỉ đầy đủ",
-    "locCoords": "Toạ độ GPS"
+    "locCoords": "Toạ độ GPS",
+    "osm": "Địa chỉ © OpenStreetMap contributors"
   }
 }

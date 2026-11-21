@@ -1,12 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as Haptics from 'expo-haptics';
+import { useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Linking,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CameraSurface, type CameraHandle } from '@/components/CameraSurface';
 import { StampCanvas } from '@/components/StampCanvas';
 import { TemplateStrip } from '@/components/TemplateStrip';
 import { Button } from '@/components/ui';
@@ -22,10 +23,13 @@ import { useMinuteClock } from '@/hooks/useMinuteClock';
 import { useLang, useTranslation } from '@/i18n';
 import { buildLines } from '@/overlay/render';
 import type { StampContent, StampVisibility } from '@/overlay/types';
+import { notify, tapFeedback } from '@/services/feedback';
 import { useLocation, useLocationLabel } from '@/services/location';
-import { useDraft } from '@/store/draft';
+import { useDraft, type CapturedPhoto } from '@/store/draft';
 import { useSettings } from '@/store/settings';
 import { C } from '@/theme';
+
+const isWeb = Platform.OS === 'web';
 
 /** Room needed below the preview for toggles, templates and the shutter. */
 const CONTROLS_H = 250;
@@ -38,15 +42,24 @@ const TOGGLES: { key: keyof StampVisibility; icon: keyof typeof Ionicons.glyphMa
   { key: 'text', icon: 'text-outline' },
 ];
 
+/** "2026:11:21 14:05:33" → Date */
+function exifDate(exif: Record<string, unknown> | null | undefined): Date | null {
+  const raw = exif?.DateTimeOriginal ?? exif?.DateTime;
+  if (typeof raw !== 'string') return null;
+  const m = /^(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2})/.exec(raw);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null;
+}
+
 export default function CameraScreen() {
   const { t } = useTranslation();
   const lang = useLang();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const [permission, requestPermission] = useCameraPermissions();
-  const camera = useRef<CameraView>(null);
+  const camera = useRef<CameraHandle>(null);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [webCamError, setWebCamError] = useState<'denied' | 'unavailable' | null>(null);
 
   const style = useSettings((s) => s.style);
   const visibility = useSettings((s) => s.visibility);
@@ -76,27 +89,42 @@ export default function CameraScreen() {
   );
   const lines = useMemo(() => buildLines(content, visibility, style, lang), [content, visibility, style, lang]);
 
+  function openEditor(photo: CapturedPhoto, takenAt: Date) {
+    startDraft(photo, takenAt, place);
+    router.push('/editor');
+  }
+
   async function capture() {
     if (!camera.current || !ready || busy) return;
     setBusy(true);
     try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      tapFeedback();
       const shotAt = new Date();
-      const photo = await camera.current.takePictureAsync({ quality: 1 });
-      startDraft({ uri: photo.uri, width: photo.width, height: photo.height }, shotAt, place);
-      router.push('/editor');
+      openEditor(await camera.current.takePhoto(), shotAt);
     } catch (e) {
-      Alert.alert('Camera', e instanceof Error ? e.message : String(e));
+      notify('Camera', e instanceof Error ? e.message : String(e));
     } finally {
       setBusy(false);
     }
   }
 
-  if (!permission) {
+  /** Full-resolution photo from the library (on iPhone web this also offers "Take Photo"). */
+  async function pickPhoto() {
+    try {
+      const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 1, exif: true });
+      if (res.canceled || !res.assets[0]) return;
+      const a = res.assets[0];
+      openEditor({ uri: a.uri, width: a.width, height: a.height }, exifDate(a.exif) ?? new Date());
+    } catch (e) {
+      notify('Photo', e instanceof Error ? e.message : String(e));
+    }
+  }
+
+  if (!isWeb && !permission) {
     return <View style={s.center}><ActivityIndicator color={C.accent} /></View>;
   }
 
-  if (!permission.granted) {
+  if (!isWeb && permission && !permission.granted) {
     return (
       <View style={[s.center, { padding: 32 }]}>
         <Ionicons name="camera-outline" size={56} color={C.accent} />
@@ -140,13 +168,36 @@ export default function CameraScreen() {
       </View>
 
       <View style={{ width: previewW, height: previewH, backgroundColor: '#000' }}>
-        <CameraView
-          ref={camera}
-          style={StyleSheet.absoluteFill}
-          facing="back"
-          onCameraReady={() => setReady(true)}
-        />
-        <StampCanvas width={previewW} height={previewH} lines={lines} style={style} canvasStyle={StyleSheet.absoluteFill} />
+        {!webCamError && (
+          <CameraSurface
+            ref={camera}
+            style={StyleSheet.absoluteFill}
+            onReady={() => setReady(true)}
+            onError={setWebCamError}
+          />
+        )}
+        {webCamError ? (
+          <View style={[StyleSheet.absoluteFill, s.camError]}>
+            <Ionicons name="videocam-off-outline" size={40} color={C.textDim} />
+            <Text style={s.camErrorText}>
+              {t(webCamError === 'denied' ? 'camera.webDenied' : 'camera.unavailable')}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <Button label={t('camera.pickPhoto')} onPress={pickPhoto} style={s.errBtn} />
+              <Button
+                variant="outline"
+                label={t('common.retry')}
+                onPress={() => {
+                  setReady(false);
+                  setWebCamError(null);
+                }}
+                style={s.errBtn}
+              />
+            </View>
+          </View>
+        ) : (
+          <StampCanvas width={previewW} height={previewH} lines={lines} style={style} canvasStyle={StyleSheet.absoluteFill} />
+        )}
       </View>
 
       <View style={s.controls}>
@@ -172,14 +223,27 @@ export default function CameraScreen() {
 
         <View style={s.shutterRow}>
           <Pressable
+            onPress={pickPhoto}
+            style={s.sideBtn}
+            accessibilityRole="button"
+            accessibilityLabel={t('camera.pickPhoto')}
+          >
+            <Ionicons name="images-outline" size={24} color={C.text} />
+          </Pressable>
+          <Pressable
             onPress={capture}
             disabled={!ready || busy}
             accessibilityRole="button"
             accessibilityLabel="Shutter"
-            style={({ pressed }) => [s.shutter, (pressed || busy) && { transform: [{ scale: 0.92 }] }]}
+            style={({ pressed }) => [
+              s.shutter,
+              (pressed || busy) && { transform: [{ scale: 0.92 }] },
+              !ready && { opacity: 0.4 },
+            ]}
           >
             <View style={s.shutterInner}>{busy && <ActivityIndicator color={C.accentText} />}</View>
           </Pressable>
+          <View style={s.sideBtn} />
         </View>
       </View>
     </View>
@@ -214,6 +278,9 @@ const s = StyleSheet.create({
     maxWidth: '70%',
   },
   locText: { color: C.text, fontSize: 13, flexShrink: 1 },
+  camError: { alignItems: 'center', justifyContent: 'center', gap: 14, padding: 24 },
+  camErrorText: { color: C.textDim, fontSize: 15, textAlign: 'center' },
+  errBtn: { flex: 0, width: 150 },
   controls: { flex: 1, justifyContent: 'space-evenly' },
   toggles: { flexDirection: 'row', justifyContent: 'center', gap: 12 },
   toggle: {
@@ -227,7 +294,8 @@ const s = StyleSheet.create({
     borderColor: C.border,
   },
   toggleOn: { backgroundColor: C.accent, borderColor: C.accent },
-  shutterRow: { alignItems: 'center' },
+  shutterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' },
+  sideBtn: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
   shutter: {
     width: 76,
     height: 76,

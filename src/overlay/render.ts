@@ -58,9 +58,15 @@ export function drawComposite(
 ) {
   const p = Skia.Paint();
   p.setAntiAlias(true);
+  // Centre-crop to fill w×h (no-op when the aspect ratios already match, e.g. export).
+  const iw = image.width();
+  const ih = image.height();
+  const k = Math.max(w / iw, h / ih);
+  const sw = w / k;
+  const sh = h / k;
   canvas.drawImageRect(
     image,
-    Skia.XYWHRect(0, 0, image.width(), image.height()),
+    Skia.XYWHRect((iw - sw) / 2, (ih - sh) / 2, sw, sh),
     Skia.XYWHRect(0, 0, w, h),
     p,
   );

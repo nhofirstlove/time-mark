@@ -1,7 +1,7 @@
 {
   "name": "time-mark",
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "main": "index",
   "dependencies": {
     "@expo-google-fonts/dancing-script": "^0.4.2",
     "@expo-google-fonts/inter": "^0.4.2",
@@ -19,6 +19,7 @@
     "expo-font": "~58.0.12",
     "expo-haptics": "~58.0.8",
     "expo-image": "~58.0.18",
+    "expo-image-picker": "~58.0.10",
     "expo-linking": "~58.0.17",
     "expo-localization": "~58.0.5",
     "expo-location": "~58.0.22",
@@ -52,7 +53,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:web": "expo export --platform web",
+    "deploy:web": "expo export --platform web && npx eas-cli@latest deploy"
   },
   "private": true
 }

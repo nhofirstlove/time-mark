@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="%LANG_ISO_CODE%">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <!-- viewport-fit=cover lets the app draw under the iPhone notch; safe areas are handled in-app. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>%WEB_TITLE%</title>
+    <meta name="description" content="Stamp your photos with date, time, place and text." />
+    <meta name="theme-color" content="#0B0B0D" />
+
+    <!-- Installable web app (Add to Home Screen) -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="TimeMark" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      html,
+      body {
+        height: 100%;
+        background: #0b0b0d;
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+      }
+      body {
+        overflow: hidden;
+      }
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+      /* Shown while the drawing engine (CanvasKit) downloads; React replaces it on mount. */
+      .tm-boot {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        color: #a0a0aa;
+        font: 500 15px -apple-system, system-ui, sans-serif;
+      }
+      .tm-boot img {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <div id="root">
+      <div class="tm-boot">
+        <img src="/icons/icon-192.png" alt="" />
+        <div>TimeMark…</div>
+      </div>
+    </div>
+  </body>
+</html>
